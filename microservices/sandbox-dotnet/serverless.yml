@@ -1,0 +1,45 @@
+service: sandbox-dotnet
+
+provider:
+  name: aws
+  runtime: dotnet6
+  region: us-east-1
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:*"
+          Resource: "arn:aws:dynamodb:us-east-1:807127398316:table/Sandbox3Albe"
+
+package:
+  individually: true
+
+functions:
+  hello:
+    handler: AwsDotnetCsharp::AwsDotnetCsharp.Handler::HelloWorld
+    package:
+      artifact: bin/release/net6.0/hello.zip
+    events:
+      - http:
+          path: hello
+          method: get
+
+  getquerystring:
+    handler: AwsDotnetCsharp::AwsDotnetCsharp.Handler::GetQuerystring
+    package:
+      artifact: bin/release/net6.0/hello.zip
+    events:
+      - http:
+          path: getquerystring
+          method: get
+
+  queryDynamoDb:
+    handler: AwsDotnetCsharp::AwsDotnetCsharp.Handler::QueryDynamoDb
+    package:
+      artifact: bin/release/net6.0/hello.zip
+    events:
+      - http:
+          path: dynamodb/query/{id}
+          method: get
